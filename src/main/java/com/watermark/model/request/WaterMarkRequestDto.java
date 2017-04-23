@@ -3,7 +3,6 @@ package com.watermark.model.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Optional;
 import com.watermark.model.domain.Book;
 import com.watermark.model.domain.Document;
 import com.watermark.model.domain.Journal;
@@ -28,6 +27,5 @@ public class WaterMarkRequestDto {
         }
 
     }
-
 
 }

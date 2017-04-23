@@ -6,10 +6,8 @@ import com.watermark.model.domain.Document;
 import com.watermark.model.enumeration.TopicType;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
@@ -82,7 +80,7 @@ public class WaterMarkResourceTest {
     }
 
     @Test
-    public void waterMarkIsReadyAfterFifteenSeconds() throws Exception {
+    public void waterMarkIsReadyAfterFiveSeconds() throws Exception {
         Document book = Book.builder().author("Stephen").title("Computer").
                 topic(TopicType.Business).build();
         MvcResult result = mockMvc.perform(post("/watermark").
@@ -91,14 +89,13 @@ public class WaterMarkResourceTest {
                 andExpect(status().isCreated()).andReturn();
         String content = result.getResponse().getContentAsString();
 
-        Thread.sleep(15000);
+        Thread.sleep(5000);
         mockMvc.perform(get("/watermark/" + content))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("book"));
 
     }
-
 
     private static byte[] convertObjectToJson(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

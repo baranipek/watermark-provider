@@ -6,7 +6,10 @@ import com.watermark.model.domain.Document;
 import com.watermark.model.domain.Journal;
 import com.watermark.model.enumeration.ContentType;
 import com.watermark.model.enumeration.TopicType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor

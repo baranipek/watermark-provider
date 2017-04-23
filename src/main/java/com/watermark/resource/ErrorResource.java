@@ -12,6 +12,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+
+//this resource provides exception handling and returns propery message to user and override white label page
 @RestController
 @RequestMapping("/error")
 public class ErrorResource implements ErrorController {

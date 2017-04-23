@@ -34,7 +34,7 @@ public class WaterMarkServiceImpl implements WaterMarkService {
         int ticketId = ticketIds.incrementAndGet();
         log.info("Creating ticket {} for document {}.", ticketId, document);
 
-        //simulate watermark operations takes 15 seconds
+        //simulate watermark operations takes 5 seconds
         Thread t = new Thread() {
             public void run() {
                 handleWaterMarkOperations(ticketMapStore, ticketId, document);
@@ -57,7 +57,7 @@ public class WaterMarkServiceImpl implements WaterMarkService {
     private void handleWaterMarkOperations(ConcurrentMap<Integer, WaterMarkResponseDto> ticketMapStore,
                                            int ticketId, Document document) {
         try {
-            Thread.sleep(15000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             log.debug("Watermark is generated Error {}", document);
         }
@@ -66,6 +66,5 @@ public class WaterMarkServiceImpl implements WaterMarkService {
 
         log.info("Watermark is generated for the document {}", document);
     }
-
 
 }
