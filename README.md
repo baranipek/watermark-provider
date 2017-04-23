@@ -22,15 +22,22 @@ content, title, author and topic. The journal watermark includes the content, ti
 
 First you need Java 8  and  can run the application using
 
-mvn spring-boot:run
+mvn spring-boot:run Or you can build the JAR file with
 
-Or you can build the JAR file with
-
-mvn clean package
-
-and run the JAR
+mvn clean package and run the JAR
 
 java -jar target/watermark-provider-0.0.1-SNAPSHOT.jar
+
+## Shipping Easily So lets Dockerize
+If you want to build docker image the steps are below
+
+docker build .
+
+docker images //list the images id
+
+docker tag efc63e8b44a8(custom value, image id) baranipek/watermark-provider
+
+docker run -p 8080:8080 baranipek/watermark-provider
 
 
 ##  API EndPoints
