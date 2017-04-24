@@ -1,13 +1,13 @@
 package com.watermark.service;
 
 
-import com.watermark.exception.TicketNotfoundException;
-import com.watermark.exception.WaterMarkNotCompletedException;
-import com.watermark.model.domain.Document;
-import com.watermark.model.response.WaterMarkResponseDto;
+import com.watermark.model.entity.Document;
+import com.watermark.model.request.DocumentRequestDto;
+import com.watermark.model.response.TicketIdResponse;
 
 public interface WaterMarkService {
-    int generateWaterMark(Document document);
 
-    WaterMarkResponseDto getWatermarkByTicketId(Integer id) throws TicketNotfoundException, WaterMarkNotCompletedException;
+    Document getWatermarkByTicketId(Long id);
+
+    TicketIdResponse createJournalWatermark(DocumentRequestDto requestDto);
 }

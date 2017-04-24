@@ -1,14 +1,10 @@
 package com.watermark.model.domain;
 
+import com.watermark.model.request.DocumentRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
-@ToString(callSuper=true)
-public class Journal extends Document {
-    @Builder
-    public Journal(String title, String author){
-        super(title,author);
-    }
+public class Journal extends DocumentRequestDto {
 }

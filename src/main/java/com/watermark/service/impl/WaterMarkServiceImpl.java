@@ -1,70 +1,64 @@
 package com.watermark.service.impl;
 
+import com.watermark.dao.DocumentDao;
 import com.watermark.exception.TicketNotfoundException;
 import com.watermark.exception.WaterMarkNotCompletedException;
-import com.watermark.model.domain.Document;
-import com.watermark.model.response.WaterMarkResponseDto;
+import com.watermark.model.entity.Document;
+import com.watermark.model.factory.DocumentFactory;
+import com.watermark.model.request.DocumentRequestDto;
+import com.watermark.model.response.TicketIdResponse;
 import com.watermark.service.WaterMarkService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Scope(value = "singleton", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Slf4j
 @Service
 public class WaterMarkServiceImpl implements WaterMarkService {
-    private ConcurrentMap<Integer, WaterMarkResponseDto> ticketMapStore;
-    private AtomicInteger ticketIds;
 
+    private DocumentDao documentDao;
 
-    @PostConstruct
-    void init() {
-        ticketMapStore = new ConcurrentHashMap<>();
-        ticketIds = new AtomicInteger();
-    }
+    @Autowired
+    public WaterMarkServiceImpl(DocumentDao documentDao) {this.documentDao = documentDao;}
 
     @Override
-    public int generateWaterMark(Document document) {
-        int ticketId = ticketIds.incrementAndGet();
-        log.info("Creating ticket {} for document {}.", ticketId, document);
+    public Document getWatermarkByTicketId(Long id) {
+        Document document = documentDao.findDocument(id);
+        if (document == null)
+            throw new TicketNotfoundException("Ticket Not Found");
+        else if (!document.hasWatermark)
+            throw new WaterMarkNotCompletedException("Watermark still processing");
+        return documentDao.findDocument(id);
+    }
+
+
+    @Override
+    public TicketIdResponse createJournalWatermark(DocumentRequestDto requestDto) {
+        Document document = DocumentFactory.getDocumentType(requestDto);
+        documentDao.create(document);
 
         //simulate watermark operations takes 5 seconds
+        Document finalDocument = document;
         Thread t = new Thread() {
             public void run() {
-                handleWaterMarkOperations(ticketMapStore, ticketId, document);
+                handleWaterMarkOperations(finalDocument, documentDao);
             }
         };
         t.start();
-
-        return ticketId;
+        return TicketIdResponse.builder().id(document.getId()).build();
     }
 
-    @Override
-    public WaterMarkResponseDto getWatermarkByTicketId(Integer id) throws TicketNotfoundException, WaterMarkNotCompletedException {
-        if (ticketMapStore == null)
-            throw new TicketNotfoundException("Ticket Not Found");
-        if (ticketMapStore.get(id) == null)
-            throw new WaterMarkNotCompletedException("Watermark still processing");
-        return ticketMapStore.get(id);
-    }
-
-    private void handleWaterMarkOperations(ConcurrentMap<Integer, WaterMarkResponseDto> ticketMapStore,
-                                           int ticketId, Document document) {
+    private void handleWaterMarkOperations(Document document, DocumentDao documentDaoThread) {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            log.debug("Watermark is generated Error {}", document);
+            log.debug("Watermark is generated Error {}");
         }
-        WaterMarkResponseDto waterMarkResponseDto = WaterMarkResponseDto.convertFromDto(document);
-        ticketMapStore.putIfAbsent(ticketId, waterMarkResponseDto);
-
-        log.info("Watermark is generated for the document {}", document);
+        document.hasWatermark = true;
+        documentDaoThread.update(document);
     }
 
 }

@@ -1,18 +1,15 @@
 package com.watermark.model.domain;
 
 
-import com.watermark.model.enumeration.TopicType;
-import lombok.*;
+import com.watermark.model.enumeration.TopicEnum;
+import com.watermark.model.request.DocumentRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(callSuper=true)
-public class Book extends Document {
-    private TopicType topic;
-    @Builder
-    public Book(String title, String author,TopicType  topic){
-        super(title,author);
-        this.topic = topic;
-    }
+public class Book  extends DocumentRequestDto{
+    private TopicEnum topic;
 }

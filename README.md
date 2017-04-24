@@ -79,4 +79,8 @@ docker run -p 8080:8080 baranipek/watermark-provider
 
   {content:"book",title:"Marketing Tricks",author:"Stephen",topic:Business}
 
+  ##  Database Console
+  if you wish to enable the h2 database console within your app.Once you add this, H2 database console
+  will be available at http://localhost:8080/console.
+
 ENJOY!

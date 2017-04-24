@@ -1,8 +1,9 @@
 package com.watermark.resource;
 
-import com.watermark.exception.TicketNotfoundException;
-import com.watermark.exception.WaterMarkNotCompletedException;
-import com.watermark.model.request.WaterMarkRequestDto;
+import com.watermark.model.domain.Book;
+import com.watermark.model.domain.Journal;
+import com.watermark.model.entity.Document;
+import com.watermark.model.response.TicketIdResponse;
 import com.watermark.service.WaterMarkService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,13 +26,22 @@ public class WaterMarkResource {
     @Autowired
     public WaterMarkResource(WaterMarkService waterMarkService) {this.waterMarkService = waterMarkService;}
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/journal",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create new WaterMarkResponseDto", notes = "Creates new WaterMarkResponseDto")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 201, message = "") })
-    public int generateWaterMark(@RequestBody WaterMarkRequestDto requestDto) {
-        log.info("Create a new watermark via post for document " + requestDto.getDocument().toString());
-        return waterMarkService.generateWaterMark(requestDto.getDocument());
+    public ResponseEntity<TicketIdResponse> createJournalWatermark(@RequestBody Journal requestDto) {
+        log.info("Create a new watermark via post for document ");
+        return new ResponseEntity<>(this.waterMarkService.createJournalWatermark(requestDto),HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping(value = "/book/{topic}",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Create new WaterMarkResponseDto", notes = "Creates new WaterMarkResponseDto")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 201, message = "") })
+    public ResponseEntity<TicketIdResponse> createBookWatermark(@RequestBody Book requestDto) {log.info("Create a new watermark via post for document ");
+        return new ResponseEntity<>(this.waterMarkService.createJournalWatermark(requestDto),HttpStatus.CREATED);
 
     }
 
@@ -38,8 +49,7 @@ public class WaterMarkResource {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get Document By ticketId", notes = "Get Document By ticketId")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Bad Request"), @ApiResponse(code = 200, message = "") })
-    public String getDocument(@PathVariable ("id") Integer id) throws TicketNotfoundException, WaterMarkNotCompletedException {
-        return waterMarkService.getWatermarkByTicketId(id).toString();
-
+    public ResponseEntity<Document> getDocument(@PathVariable ("id") Long id) {
+        return new ResponseEntity<>(this.waterMarkService.getWatermarkByTicketId(id),HttpStatus.CREATED);
     }
 }

@@ -1,9 +1,9 @@
+/*
 package com.watermark.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.watermark.model.domain.Book;
-import com.watermark.model.domain.Document;
-import com.watermark.model.enumeration.TopicType;
+import com.watermark.model.enumeration.TopicEnum;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class WaterMarkResourceTest {
 
     @Test
     public void postWatermarkAndReturnTicketIdAsExpected() throws Exception {
-        Document book = new Book("Book", "Stephen Hawking", TopicType.Business);
+        Document book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -67,7 +67,7 @@ public class WaterMarkResourceTest {
 
     @Test()
     public void waterMarkIsNotReadyInCaseOfConsecutiveCalls() throws Exception {
-        Document book = new Book("Book", "Stephen Hawking", TopicType.Business);
+        Document book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -82,7 +82,7 @@ public class WaterMarkResourceTest {
     @Test
     public void waterMarkIsReadyAfterFiveSeconds() throws Exception {
         Document book = Book.builder().author("Stephen").title("Computer").
-                topic(TopicType.Business).build();
+                topic(TopicEnum.Business).build();
         MvcResult result = mockMvc.perform(post("/watermark").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -102,4 +102,4 @@ public class WaterMarkResourceTest {
         return mapper.writeValueAsBytes(object);
     }
 
-}
+}*/

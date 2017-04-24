@@ -1,5 +1,5 @@
 package com.watermark.model.enumeration;
 
-public enum  ContentType {
+public enum ContentEnum {
     book, journal;
 }

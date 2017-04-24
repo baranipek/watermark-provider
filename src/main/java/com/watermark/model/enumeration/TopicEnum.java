@@ -1,6 +1,6 @@
 package com.watermark.model.enumeration;
 
-public enum TopicType {
+public enum TopicEnum {
     Business,
     Science,
     Media
