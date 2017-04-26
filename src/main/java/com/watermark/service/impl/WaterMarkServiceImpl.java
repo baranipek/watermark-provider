@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class WaterMarkServiceImpl implements WaterMarkService {
 
-    private AtomicInteger sequenceIcrementar;
+    private AtomicInteger sequenceIncrement;
 
     @PostConstruct
-    void init() {sequenceIcrementar= new AtomicInteger();}
+    void init() {sequenceIncrement = new AtomicInteger();}
 
     @Resource
     private DocumentRepository documentRepository;
@@ -42,7 +42,7 @@ public class WaterMarkServiceImpl implements WaterMarkService {
 
     @Override
     public TicketIdResponse createJournalWatermark(Watermark watermark) {
-        Document document = DocumentFactory.getDocumentType(watermark,sequenceIcrementar.incrementAndGet());
+        Document document = DocumentFactory.getDocumentType(watermark, sequenceIncrement.incrementAndGet());
         documentRepository.save(document);
 
         //simulate watermark operations takes 5 seconds

@@ -37,7 +37,7 @@ public class MongoConfig {
     public MongoDbFactory mongoDbFactory() throws UnknownHostException {
         Mongo mongo = new MongoClient(MONGO_DB_URL, MONGO_DB_PORT);
         UserCredentials userCredentials = new UserCredentials("", ""); // username and password
-        return new SimpleMongoDbFactory(mongo, "store", userCredentials);
+        return new SimpleMongoDbFactory(mongo, "document", userCredentials);
     }
 
     @Bean
@@ -48,7 +48,7 @@ public class MongoConfig {
 
     @PostConstruct
     public void construct() throws UnknownHostException, IOException {
-        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION)
+        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.V2_2)
                 .net(new Net(MONGO_DB_URL, MONGO_DB_PORT, true)).build();
         mongodExecutable = starter.prepare(mongodConfig);
         MongodProcess mongod = mongodExecutable.start();
