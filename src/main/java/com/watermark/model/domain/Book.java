@@ -2,7 +2,6 @@ package com.watermark.model.domain;
 
 
 import com.watermark.model.enumeration.TopicEnum;
-import com.watermark.model.request.Watermark;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

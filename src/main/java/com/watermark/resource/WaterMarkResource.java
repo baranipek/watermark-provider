@@ -36,7 +36,7 @@ public class WaterMarkResource {
 
     }
 
-    @RequestMapping(value = "/book/{topic}",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/book",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create new WaterMarkResponseDto", notes = "Creates new WaterMarkResponseDto")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 201, message = "") })
@@ -50,6 +50,6 @@ public class WaterMarkResource {
     @ApiOperation(value = "Get Document By ticketId", notes = "Get Document By ticketId")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Bad Request"), @ApiResponse(code = 200, message = "") })
     public ResponseEntity<Document> getDocument(@PathVariable ("id") Long id) {
-        return new ResponseEntity<>(this.waterMarkService.getWatermarkByTicketId(id),HttpStatus.CREATED);
+        return new ResponseEntity<>(this.waterMarkService.getWatermarkByTicketId(id),HttpStatus.OK);
     }
 }

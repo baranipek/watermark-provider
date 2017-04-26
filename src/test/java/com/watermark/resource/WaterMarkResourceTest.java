@@ -1,9 +1,11 @@
-/*
+
 package com.watermark.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.watermark.model.domain.Book;
+import com.watermark.model.domain.Watermark;
 import com.watermark.model.enumeration.TopicEnum;
+import com.watermark.model.response.TicketIdResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,21 +44,21 @@ public class WaterMarkResourceTest {
 
     @Test
     public void postWatermarkAndReturnTicketIdAsExpected() throws Exception {
-        Document book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
-        MvcResult result = mockMvc.perform(post("/watermark").
+        Watermark book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
+        MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
                 andExpect(status().isCreated()).andReturn();
         String content = result.getResponse().getContentAsString();
-        int returnedTicket = Integer.parseInt(content);
-        Assert.assertEquals(ticketIds.incrementAndGet(), returnedTicket);
+        TicketIdResponse response = TicketIdResponse.builder().id(ticketIds.incrementAndGet()).build();
+        Assert.assertTrue(content.contains(response.getId().toString()));
     }
 
 
     @Test
     public void getWatermarkWithoutId() throws Exception {
         mockMvc.perform(get("/watermark")).
-                andExpect(status().isMethodNotAllowed());
+                andExpect(status().isNotFound());
     }
 
     @Test
@@ -65,32 +67,31 @@ public class WaterMarkResourceTest {
                 andExpect(status().isNotFound());
     }
 
-    @Test()
+    @Test
     public void waterMarkIsNotReadyInCaseOfConsecutiveCalls() throws Exception {
-        Document book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
-        MvcResult result = mockMvc.perform(post("/watermark").
+        Watermark book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
+        MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
                 andExpect(status().isCreated()).andReturn();
         String content = result.getResponse().getContentAsString();
 
-        mockMvc.perform(get("/watermark/" + content))
+        mockMvc.perform(get("/watermark/" + getDigits(content)))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     public void waterMarkIsReadyAfterFiveSeconds() throws Exception {
-        Document book = Book.builder().author("Stephen").title("Computer").
-                topic(TopicEnum.Business).build();
-        MvcResult result = mockMvc.perform(post("/watermark").
+        Watermark book = new Book("Stephen", "Computer", TopicEnum.Business);
+        MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
                 andExpect(status().isCreated()).andReturn();
         String content = result.getResponse().getContentAsString();
 
         Thread.sleep(5000);
-        mockMvc.perform(get("/watermark/" + content))
+        mockMvc.perform(get("/watermark/" + getDigits(content)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("book"));
@@ -102,4 +103,16 @@ public class WaterMarkResourceTest {
         return mapper.writeValueAsBytes(object);
     }
 
-}*/
+    private String getDigits(String input) {
+        int length = input.length();
+        String result = "";
+        for (int i = 0; i < length; i++) {
+            Character character = input.charAt(i);
+            if (Character.isDigit(character)) {
+                result += character;
+            }
+        }
+        return result;
+    }
+
+}
