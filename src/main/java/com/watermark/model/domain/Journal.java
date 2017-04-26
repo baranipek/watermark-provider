@@ -1,10 +1,8 @@
 package com.watermark.model.domain;
 
-import com.watermark.model.request.DocumentRequestDto;
-import lombok.Builder;
+import com.watermark.model.request.Watermark;
 import lombok.Data;
-import lombok.ToString;
 
 @Data
-public class Journal extends DocumentRequestDto {
+public class Journal extends Watermark {
 }
