@@ -2,15 +2,16 @@
 package com.watermark.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.watermark.config.MongoConfig;
 import com.watermark.model.domain.Book;
 import com.watermark.model.domain.Journal;
 import com.watermark.model.domain.Watermark;
 import com.watermark.model.enumeration.TopicEnum;
 import com.watermark.model.response.TicketIdResponse;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
@@ -32,17 +33,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc(print = MockMvcPrint.LOG_DEBUG)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WaterMarkResourceTest {
+    static AtomicInteger ticketIds = new AtomicInteger();
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private MongoConfig mongoConfig;
-
     @Test
     public void postBookAndReturnTicketIdAsExpected() throws Exception {
-        AtomicInteger ticketIds = new AtomicInteger();
         Watermark book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
@@ -56,7 +55,6 @@ public class WaterMarkResourceTest {
 
     @Test
     public void postJournalAndReturnTicketIdAsExpected() throws Exception {
-        AtomicInteger ticketIds = new AtomicInteger();
         Watermark journal = new Journal("Journal", "Stephen Hawking");
         MvcResult result = mockMvc.perform(post("/watermark/journal").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
@@ -65,7 +63,7 @@ public class WaterMarkResourceTest {
         String content = result.getResponse().getContentAsString();
         TicketIdResponse response = TicketIdResponse.builder().id(ticketIds.incrementAndGet()).build();
         Assert.assertTrue(content.contains(response.getId().toString()));
-        mongoConfig.destroy();
+
     }
 
     @Test

@@ -1,16 +1,8 @@
 package com.watermark.config;
 
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.authentication.UserCredentials;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -18,6 +10,15 @@ import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.runtime.Network;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 @Configuration
+@EnableAutoConfiguration(exclude = { EmbeddedMongoAutoConfiguration.class })
 public class MongoConfig {
 
     private static final String MONGO_DB_URL = "localhost";
@@ -48,8 +50,9 @@ public class MongoConfig {
 
     @PostConstruct
     public void construct() throws UnknownHostException, IOException {
-        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.V2_2)
-                .net(new Net(MONGO_DB_URL, MONGO_DB_PORT, true)).build();
+        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION)
+                .net(new Net(MONGO_DB_URL, MONGO_DB_PORT, Network.localhostIsIPv6())).build();
+
         mongodExecutable = starter.prepare(mongodConfig);
         MongodProcess mongod = mongodExecutable.start();
     }
@@ -58,6 +61,8 @@ public class MongoConfig {
     public void destroy() {
         if (mongodExecutable != null) {
             mongodExecutable.stop();
+
+
         }
     }
 }
