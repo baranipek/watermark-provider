@@ -31,11 +31,13 @@ java -jar target/watermark-provider-0.0.1-SNAPSHOT.jar
 ## Shipping Easily So lets Dockerize
 If you want to build docker image the steps are below
 
+clean package
+
 docker build .
 
 docker images //list the images id
 
-docker tag efc63e8b44a8(custom value, image id) baranipek/watermark-provider
+docker tag efc63e8b44a8 (custom value, image id) baranipek/watermark-provider
 
 docker run -p 8080:8080 baranipek/watermark-provider
 
@@ -47,13 +49,13 @@ docker run -p 8080:8080 baranipek/watermark-provider
 
   2.If you don't want to use swagger lets first create watermark
   
-  curl -X POST --header "Content-Type: application/json" --header "Accept: */*" -d "{
-    \"author\": \"Stephen\",
-    \"title\": \"Marketing Tricks\",
-    \"topic\": \"Business\"
-  }" "http://localhost:8080/watermark"
+curl -X POST --header "Content-Type: application/json" --header "Accept: */*" -d "{
+  \"author\": \"Stephen\",
+  \"title\": \"myWorld\",
+  \"topic\": \"Science\"   //topic is required for book endpoint .(Business | Science |Media)
+}" "http://localhost:8080/watermark/book"
 
-  Response: 3 (ticketId)
+  Response: 1 (ticketId)
 
   2. After 3 seconds Lets see the process of the document.
 
@@ -71,16 +73,24 @@ docker run -p 8080:8080 baranipek/watermark-provider
     }
 
 
-  3. What about after ten seconds.
+  3. What about after ten seconds. (Watermark operation takes 5 seconds)
   
-  curl -X GET --header "Accept: */*" "http://localhost:8080/watermark/3"
+  curl -X GET --header "Accept: */*" "http://localhost:8080/watermark/1"
   
   Response Body
 
-  {content:"book",title:"Marketing Tricks",author:"Stephen",topic:Business}
+  {
+    "author": "Stephen",
+    "title": "myWorld",
+    "watermark": {
+      "title": "myWorld",
+      "author": "Stephen",
+      "content": "book",
+      "topic": "Science"
+    }
+  }
 
-  ##  Database Console
-  if you wish to enable the h2 database console within your app.Once you add this, H2 database console
-  will be available at http://localhost:8080/h2-console
+  ##  Database 
+  Embedded Mongo is used in order to store document. You can use robomongo for selecting records.
 
 ENJOY!

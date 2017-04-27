@@ -1,9 +1,9 @@
 package com.watermark.model.entity;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+
+import java.io.Serializable;
 
 public class BaseDocument<ID extends Serializable> {
 
@@ -14,7 +14,6 @@ public class BaseDocument<ID extends Serializable> {
     public ID getId() {
         return id;
     }
-
 
     @Override
     public String toString() {

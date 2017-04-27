@@ -2,11 +2,12 @@ package com.watermark.service.impl;
 
 import com.watermark.exception.DocumentNotfoundException;
 import com.watermark.exception.WaterMarkNotCompletedException;
-import com.watermark.repository.DocumentRepository;
+import com.watermark.model.domain.Watermark;
 import com.watermark.model.entity.Document;
 import com.watermark.model.factory.DocumentFactory;
-import com.watermark.model.domain.Watermark;
 import com.watermark.model.response.TicketIdResponse;
+import com.watermark.repository.DocumentRepository;
+import com.watermark.request.WatermarkRequestDto;
 import com.watermark.service.WaterMarkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
@@ -25,7 +26,9 @@ public class WaterMarkServiceImpl implements WaterMarkService {
     private AtomicInteger sequenceIncrement;
 
     @PostConstruct
-    void init() {sequenceIncrement = new AtomicInteger();}
+    void init() {
+        sequenceIncrement = new AtomicInteger();
+    }
 
     @Resource
     private DocumentRepository documentRepository;
@@ -33,36 +36,38 @@ public class WaterMarkServiceImpl implements WaterMarkService {
     @Override
     public Document getWatermarkByTicketId(Long id) {
         Document document = documentRepository.findOne(id);
-        if (document==null)
-            throw  new DocumentNotfoundException("Document Not Found");
-        else if (document.watermark==null)
+        if (document == null) {
+            throw new DocumentNotfoundException("Document Not Found");
+        } else if (document.watermark == null) {
             throw new WaterMarkNotCompletedException("Watermark is still processing");
+        }
         return document;
     }
 
     @Override
-    public TicketIdResponse createJournalWatermark(Watermark watermark) {
+    public TicketIdResponse createJournalWatermark(WatermarkRequestDto watermark) {
         Document document = DocumentFactory.getDocumentType(watermark, sequenceIncrement.incrementAndGet());
         documentRepository.save(document);
 
         //simulate watermark operations takes 5 seconds
-        Document finalDocument = document;
+        Document updatedDocument = document;
         Thread t = new Thread() {
             public void run() {
-                handleWaterMarkOperations(finalDocument,watermark);
+                handleWaterMarkOperations(updatedDocument, watermark);
             }
         };
         t.start();
         return TicketIdResponse.builder().id(document.getId()).build();
     }
 
-    private void handleWaterMarkOperations(Document document, Watermark watermark) {
+    protected void handleWaterMarkOperations(Document document, WatermarkRequestDto watermarkRequestDto) {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             log.debug("Watermark is generated Error {}");
         }
-        document.watermark=watermark;
+        Watermark watermark=DocumentFactory.getWatermarkType(watermarkRequestDto);
+        document.watermark = watermark;
         documentRepository.save(document);
     }
 

@@ -11,6 +11,7 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +30,12 @@ import java.net.UnknownHostException;
 @EnableAutoConfiguration(exclude = { EmbeddedMongoAutoConfiguration.class })
 public class MongoConfig {
 
-    private static final String MONGO_DB_URL = "localhost";
-    private static final int MONGO_DB_PORT = 12345;
+    @Value("${mongo.db.port}")
+    private int MONGO_DB_PORT;
+
+    @Value("${mongo.db.host}")
+    private String MONGO_DB_URL;
+
 
     MongodStarter starter = MongodStarter.getDefaultInstance();
     MongodExecutable mongodExecutable;
@@ -49,7 +54,7 @@ public class MongoConfig {
     }
 
     @PostConstruct
-    public void construct() throws UnknownHostException, IOException {
+    public void construct() throws IOException {
         IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION)
                 .net(new Net(MONGO_DB_URL, MONGO_DB_PORT, Network.localhostIsIPv6())).build();
 
@@ -61,7 +66,6 @@ public class MongoConfig {
     public void destroy() {
         if (mongodExecutable != null) {
             mongodExecutable.stop();
-
 
         }
     }

@@ -1,22 +1,23 @@
 package com.watermark.model.domain;
 
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.watermark.model.enumeration.ContentEnum;
+import com.watermark.model.enumeration.TopicEnum;
+import com.watermark.request.WatermarkRequestDto;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Watermark {
-    @NotNull
-    @Size(max = 500)
-    public String title;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Watermark extends WatermarkRequestDto{
 
-    @NotNull
-    @Size(max = 500)
-    public String author;
+    ContentEnum content;
+
+    TopicEnum topic;
+
+    public Watermark(String title, String author,ContentEnum content, TopicEnum topic) {
+        super(title,author);
+        this.content =content;
+        this.topic=topic;
+    }
 }

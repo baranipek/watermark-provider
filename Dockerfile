@@ -1,5 +1,6 @@
-FROM frolvlad/alpine-oraclejdk8:slim
+FROM java:8
 VOLUME /tmp
+RUN apt-get update && apt-get install -y libstdc++6
 ADD target/watermark-provider-0.0.1-SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
 ENV JAVA_OPTS=""

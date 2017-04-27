@@ -4,7 +4,6 @@ import com.watermark.exception.DocumentNotfoundException;
 import com.watermark.exception.WaterMarkNotCompletedException;
 import com.watermark.model.domain.Watermark;
 import com.watermark.model.entity.Document;
-import com.watermark.model.factory.DocumentFactory;
 import com.watermark.repository.DocumentRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +31,6 @@ public class WaterMarkServiceImplTest {
     @Mock
     private DocumentRepository documentRepository;
 
-    @Mock
-    private DocumentFactory documentFactory;
-
     @InjectMocks
     private WaterMarkServiceImpl service;
 
@@ -43,7 +39,6 @@ public class WaterMarkServiceImplTest {
     @Before
     public void setUp() throws Exception {
         ticketIds = new AtomicInteger();
-        documentFactory = new DocumentFactory();
     }
 
     @Test
@@ -71,4 +66,5 @@ public class WaterMarkServiceImplTest {
         assertEquals(document, document);
 
     }
+
 }

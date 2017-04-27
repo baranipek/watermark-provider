@@ -4,9 +4,9 @@ package com.watermark.resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.watermark.model.domain.Book;
 import com.watermark.model.domain.Journal;
-import com.watermark.model.domain.Watermark;
 import com.watermark.model.enumeration.TopicEnum;
 import com.watermark.model.response.TicketIdResponse;
+import com.watermark.request.WatermarkRequestDto;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class WaterMarkResourceTest {
 
     @Test
     public void postBookAndReturnTicketIdAsExpected() throws Exception {
-        Watermark book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
+        WatermarkRequestDto book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -55,7 +55,7 @@ public class WaterMarkResourceTest {
 
     @Test
     public void postJournalAndReturnTicketIdAsExpected() throws Exception {
-        Watermark journal = new Journal("Journal", "Stephen Hawking");
+        WatermarkRequestDto journal = new Journal("Journal", "Stephen Hawking");
         MvcResult result = mockMvc.perform(post("/watermark/journal").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(journal))).
@@ -68,19 +68,17 @@ public class WaterMarkResourceTest {
 
     @Test
     public void getWatermarkWithoutId() throws Exception {
-        mockMvc.perform(get("/watermark")).
-                andExpect(status().isNotFound());
+        mockMvc.perform(get("/watermark")).andExpect(status().isNotFound());
     }
 
     @Test
     public void ticketNotFoundWithWrongId() throws Exception {
-        mockMvc.perform(get("/watermark/13113213")).
-                andExpect(status().isNotFound());
+        mockMvc.perform(get("/watermark/13113213")).andExpect(status().isNotFound());
     }
 
     @Test
     public void waterBookWatermarkIsNotReadyInCaseOfConsecutiveCalls() throws Exception {
-        Watermark book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
+        WatermarkRequestDto book = new Book("Book", "Stephen Hawking", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -95,7 +93,7 @@ public class WaterMarkResourceTest {
 
     @Test
     public void watermarkIsReadyAfterFiveSeconds() throws Exception {
-        Watermark book = new Book("Stephen", "Computer", TopicEnum.Business);
+        WatermarkRequestDto book = new Book("Stephen", "Computer", TopicEnum.Business);
         MvcResult result = mockMvc.perform(post("/watermark/book").
                 contentType(MediaType.APPLICATION_JSON_UTF8).
                 content(convertObjectToJson(book))).
@@ -106,7 +104,7 @@ public class WaterMarkResourceTest {
         mockMvc.perform(get("/watermark/" + getDigits(content)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").value("book"));
+                .andExpect(jsonPath("$.author").value("Computer"));
 
 
     }
